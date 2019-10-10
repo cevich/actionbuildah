@@ -8,6 +8,6 @@ RUN dnf update -y && \
 ADD ["/setup.sh", "/entrypoint.sh", "/root/bin/"]
 ADD ["/Dockerfile", "/packages.txt", "/root/"]
 RUN /usr/bin/env DOCKERFILE=true \
-        /usr/bin/bash /root/bin/setup.sh /root/packages.txt |& tee /root/setup.log && \
+        /usr/bin/bash /root/bin/setup.sh /root/packages.txt && \
     chmod +x /root/bin/entrypoint.sh
 ENTRYPOINT ["/root/bin/entrypoint.sh"]

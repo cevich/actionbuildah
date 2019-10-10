@@ -2,6 +2,8 @@
 
 set -eo pipefail
 
+echo "Executing $0"
+
 die() {
     echo "Error: ${1:-No error message specified}"
     exit 1
@@ -23,7 +25,9 @@ PACKAGES=("$(<$1)")
 [[ "${#PACKAGES[@]}" -gt "0" ]] || \
     die "Did not find any packages to install from packages.txt"
 
-set -x
-dnf install -y ${PACKAGES[@]}
-dnf clean all
-rm -rf /var/cache/dnf
+(
+    set -x
+    dnf install -y ${PACKAGES[@]}
+    dnf clean all
+    rm -rf /var/cache/dnf
+) |& tee /root/$(basename "$0" | cut -d '.' -f 1).log

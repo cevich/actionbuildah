@@ -1,0 +1,47 @@
+---
+
+# Ref: https://help.github.com/en/categories/automating-your-workflow-with-github-actions
+
+name:  Make Container Action CI
+
+on:
+    schedule:
+        - cron: '01 10 */3 * *'
+    pull_request:
+        branches: [master]
+    push:
+        branches: [master]
+
+env:
+    _TEST_FQIN: ${{ github.actor }}_test_image:${{ github.sha }}
+
+jobs:
+    test_action:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Clone repository
+              uses: actions/checkout@master
+
+            - name: Test building container image
+              run: docker build -t "${_TEST_FQIN}" .
+
+            - name: Test ${{ github.repository }} action behavior (produce artifact)
+              uses: ./
+              with:
+                  args: set_artifact
+                  artifacts_dirpath: fooptyboopty
+
+            - name: Container tools execute and report version numbers
+              uses: ./
+              with:
+                  args: versions
+
+            - name: Test ${{ github.repository }} action behavior (consume artifact)
+              uses: ./
+              with:
+                  # Sets the env. var 'testing' to 'passed'
+                  args: get_artifact
+                  artifacts_dirpath: fooptyboopty
+
+            - name: Validate env. var. setting from ${{ github.repository }} action
+              run: test ${testing} == "passed"

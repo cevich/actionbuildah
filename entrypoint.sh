@@ -41,18 +41,8 @@ done
 
 cd "$GITHUB_WORKSPACE"
 
-# optional input defined by action.yml
-if [[ -n "$INPUT_ARTIFACTS_DIRPATH" ]]; then
-    abs_artpath=$(realpath "$INPUT_ARTIFACTS_DIRPATH")
-    rel_artpath=${abs_artpath##$GITHUB_WORKSPACE}
-    [[ "${abs_artpath%%$rel_artpath}" == "$GITHUB_WORKSPACE" ]] || \
-        die "The artifacts_dirpath input value ('$INPUT_ARTIFACTS_DIRPATH') must be a subdirectory of \$GITHUB_WORKSPACE ('$GITHUB_WORKSPACE')"
-    # This allows easily chaining multiple action's artifacts together
-    # ref: https://help.github.com/en/articles/development-tools-for-github-actions#logging-commands
-    echo "::set-output name=artifacts_dirpath::$INPUT_ARTIFACTS_DIRPATH"
+[[ -z "$INPUT_ARTIFACTS_DIRPATH" ]] || \
+    mkdir -vp "$INPUT_ARTIFACTS_DIRPATH"
 
-    env ARTIFACTS_DIRPATH="$abs_artpath" /usr/bin/make $@
-else
-    /usr/bin/make $@
-fi
-
+set -x
+/usr/bin/make $@

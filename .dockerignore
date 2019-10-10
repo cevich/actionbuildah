@@ -1,5 +1,6 @@
 .dockerignore
 .git
+.github
 LICENSE
 README.md
 action.yml

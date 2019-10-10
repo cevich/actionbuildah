@@ -7,10 +7,6 @@ inputs:
         # Ref: https://help.github.com/en/articles/persisting-workflow-data-using-artifacts
         description: Optional, path to directory under $GITHUB_WORKSPACE populated by a previous actions/download-artifact
         required: false
-outputs:
-    artifacts_dirpath:
-        # Ref: https://help.github.com/en/articles/persisting-workflow-data-using-artifacts
-        description: Optional, path to directory under $GITHUB_WORKSPACE to be preserved by future actions/upload-artifact
 runs:
     # environment variables are for communicating across runtime environments
     # env:
