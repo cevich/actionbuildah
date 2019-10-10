@@ -1,6 +1,17 @@
-# Hello world docker action
+# Make Container Action
 
-This action prints "Hello World" to the log or "Hello" + the name of a person to greet. To learn how this action was built, see "[Creating a Docker container action](https://help.github.com/en/articles/creating-a-docker-container-action)" in the GitHub Help documentation.
+This action simply executes 'make' with the provided `args` (if any) using
+the latest Fedora container image with container-tools pre-installed:
+
+* Buildah
+* Podman
+* Shopeo
+
+## Env
+
+### ARTIFACTS_DIRPATH
+
+**Optional**: Path to create before executing make, and persist to the next action (as an env. var.)
 
 ## Inputs
 

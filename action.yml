@@ -1,15 +1,18 @@
-name: 'Hello World'
-description: 'Greet someone and record the time'
+# Ref: https://help.github.com/en/articles/metadata-syntax-for-github-actions
+name: 'Make Container Action'
+description: 'Build make target in container-tools image using the latest Fedora release'
+# Inputs/Outputs for communicating w/ automation
 inputs:
-  who-to-greet:  # id of input
-    description: 'Who to greet'
-    required: true
-    default: 'World'
+    artifacts_dirpath:
+        # Ref: https://help.github.com/en/articles/persisting-workflow-data-using-artifacts
+        description: Optional, path to directory under $GITHUB_WORKSPACE populated by a previous actions/download-artifact
+        required: false
 outputs:
-  time: # id of output
-    description: 'The time we greeted you'
+    artifacts_dirpath:
+        # Ref: https://help.github.com/en/articles/persisting-workflow-data-using-artifacts
+        description: Optional, path to directory under $GITHUB_WORKSPACE to be preserved by future actions/upload-artifact
 runs:
-  using: 'docker'
-  image: 'Dockerfile'
-  args:
-    - ${{ inputs.who-to-greet }}
+    # environment variables are for communicating across runtime environments
+    # env:
+    using: 'docker'
+    image: 'Dockerfile'
