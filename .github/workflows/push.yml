@@ -1,0 +1,46 @@
+---
+
+# Ref: https://help.github.com/en/categories/automating-your-workflow-with-github-actions
+
+name:  Push action container image to repository
+
+on:
+    push:
+        branches: [master]
+        tags:
+            - v[0-9]+.[0-9]+
+
+env:
+    _REG: quay.io
+
+jobs:
+    push:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Clone repository
+              uses: actions/checkout@master
+
+            - name: Set environment variables
+              env:
+                  _REG: quay.io
+              run: |
+                  echo "set -a" > .env
+                  echo "ENV_FQIN='${_REG}/${GITHUB_REPOSITORY}:test'" >> .env
+
+            - name: Building container image
+              run: docker build -t "$(source .env && echo $ENV_FQIN)" .
+
+            - name: Configure docker
+              env:
+                  # Ref: https://github.com/cevich/makecontaineraction/settings/secrets
+                  _BOT_CREDENTIALS: ${{ secrets.bot_credentials }}
+              run: |
+                  set +x
+                  set -euo pipefail
+                  mkdir -p "$HOME/.docker"
+                  echo "$_BOT_CREDENTIALS" |& base64 --decode &> "$HOME/.docker/config.json"
+
+            - name: Push image to registry
+              run: |
+                  trap "rm -f $HOME/.docker/config.json" EXIT
+                  docker push "$(source .env && echo $ENV_FQIN)"

@@ -7,28 +7,15 @@ the latest Fedora container image with container-tools pre-installed:
 * Podman
 * Shopeo
 
-## Env
-
-### ARTIFACTS_DIRPATH
-
-**Optional**: Path to create before executing make, and persist to the next action (as an env. var.)
-
 ## Inputs
 
-### `who-to-greet`
-
-**Required** The name of the person to greet. Default `"World"`.
-
-## Outputs
-
-### `time`
-
-The time we greeted you.
+*see `artifacts.yml`*
 
 ## Example usage
 
 ```yaml
-uses: actions/hello-world-docker-action@master
+uses: cevich/makecontaineraction
 with:
-  who-to-greet: 'Mona the Octocat'
+    args: make_target
+    artifacts_dirpath: ./path/to/stuff
 ```
