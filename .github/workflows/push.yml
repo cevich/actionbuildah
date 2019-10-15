@@ -2,9 +2,11 @@
 
 # Ref: https://help.github.com/en/categories/automating-your-workflow-with-github-actions
 
-name:  Push action container image to repository
+name:  Build and push action container image to repository
 
 on:
+    schedule:
+        - cron: '01 10 */3 * *'
     push:
         branches: [master]
         tags:
@@ -12,6 +14,7 @@ on:
 
 env:
     _REG: quay.io
+    _IMG: ${{ github.repository }}
 
 jobs:
     push:
@@ -24,23 +27,38 @@ jobs:
               env:
                   _REG: quay.io
               run: |
-                  echo "set -a" > .env
-                  echo "ENV_FQIN='${_REG}/${GITHUB_REPOSITORY}:test'" >> .env
+                  cat <<EOF> .env
+                  set -eaxuo pipefail
+                  ENV_TAG="$(git describe --long HEAD)"
+                  ENV_FQIN="${_REG}/${_IMG}:$ENV_TAG"
+                  ENV_IMG_FILENAME="${_IMG}-${ENV_TAG}.tar"
+                  EOF
 
-            - name: Building container image
-              run: docker build -t "$(source .env && echo $ENV_FQIN)" .
+            - name: Build container image
+              run: |
+                  source .env
+                  docker build -t "${ENV_FQIN}" .
 
-            - name: Configure docker
+            - name: Save image to tar file
+              run: |
+                  source .env
+                  mkdir -p artifacts
+                  docker save > "artifacts/${ENV_IMG_FILENAME}"
+
+            - name: Upload artifacts
+              uses: actions/upload-artifact@master
+              with:
+                  name: artifacts
+                  path: artifacts
+
+            - name: Push image to registry
               env:
                   # Ref: https://github.com/cevich/makecontaineraction/settings/secrets
                   _BOT_CREDENTIALS: ${{ secrets.bot_credentials }}
               run: |
-                  set +x
-                  set -euo pipefail
+                  source .env
                   mkdir -p "$HOME/.docker"
+                  trap "rm -vf $HOME/.docker" EXIT
+                  set +x
                   echo "$_BOT_CREDENTIALS" |& base64 --decode &> "$HOME/.docker/config.json"
-
-            - name: Push image to registry
-              run: |
-                  trap "rm -f $HOME/.docker/config.json" EXIT
-                  docker push "$(source .env && echo $ENV_FQIN)"
+                  docker push "${ENV_FQIN}"
