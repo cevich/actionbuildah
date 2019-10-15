@@ -2,7 +2,7 @@
 
 # Ref: https://help.github.com/en/categories/automating-your-workflow-with-github-actions
 
-name:  Make Container Action CI
+name:  Build and test github action container image
 
 on:
     schedule:
@@ -16,7 +16,14 @@ env:
     _TEST_FQIN: ${{ github.actor }}_test_image:${{ github.sha }}
 
 jobs:
-    test_action:
+    event_detail:
+        runs-on: ubuntu-latest
+        steps:
+            - run: |
+                sudo apt-get -qq install --yes jq
+                jq --raw-output . "$GITHUB_EVENT_PATH"
+
+    build_and_test:
         runs-on: ubuntu-latest
         steps:
             - name: Clone repository
