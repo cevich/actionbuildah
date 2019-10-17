@@ -11,4 +11,4 @@ runs:
     # environment variables are for communicating across runtime environments
     # env:
     using: 'docker'
-    image: Dockerfile
+    image: 'docker://quay.io/cevich/makecontaineraction:v1.1'
