@@ -5,10 +5,10 @@ description: 'Build make target in container-tools image using the latest Fedora
 inputs:
     artifacts_dirpath:
         # Ref: https://help.github.com/en/articles/persisting-workflow-data-using-artifacts
-        description: Optional, path to directory under $GITHUB_WORKSPACE populated by a previous actions/download-artifact
+        description: Optional, path to directory under `$GITHUB_WORKSPACE` or `$HOME` where artifacts are expected.  Will be made available to Makefile via INPUT_ARTIFACTS_DIRPATH variable.
         required: false
 runs:
     # environment variables are for communicating across runtime environments
     # env:
     using: 'docker'
-    image: 'Dockerfile'
+    image: Dockerfile

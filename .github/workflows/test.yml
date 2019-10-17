@@ -57,6 +57,11 @@ jobs:
             - name: Clone repository
               uses: actions/checkout@master
 
+            - name: Modify action metadata to utilize built test image
+              run: |
+                  sed -i -r -e "s#(^\s+image: ).+#\1docker://${_TEST_FQIN}#" ./action.yml
+                  egrep '^\s+image:' ./action.yml
+
             - name: Test container tools execute within a container
               uses: ./
               with:

@@ -28,8 +28,7 @@ jobs:
               env:
                   _REG: quay.io
               run: |
-                  # There may not be a tag in this tree for some reason
-                  _TAG="$(git describe --long HEAD || git rev-parse --short=8 HEAD)"
+                  _TAG="$(basename $GITHUB_REF)"
                   # Evaluate values here so they're static upon load
                   cat << EOF > .env
                   set -eaxuo pipefail
