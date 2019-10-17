@@ -1,4 +1,4 @@
-FROM fedora:latest
+FROM registry.fedoraproject.org/fedora:latest
 MAINTAINER Chris Evich <cevich@redhat.com>
 ENV CONTAINER=true
 RUN dnf update -y && \
