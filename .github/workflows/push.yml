@@ -14,6 +14,7 @@ on:
 
 env:
     _REG: quay.io
+    # N/B: Will be of the form "<org>/<user>"
     _IMG: ${{ github.repository }}
 
 jobs:
@@ -27,11 +28,14 @@ jobs:
               env:
                   _REG: quay.io
               run: |
-                  cat <<EOF> .env
+                  # There may not be a tag in this tree for some reason
+                  _TAG="$(git describe --long HEAD || git rev-parse --short=8 HEAD)"
+                  # Evaluate values here so they're static upon load
+                  cat << EOF > .env
                   set -eaxuo pipefail
-                  ENV_TAG="$(git describe --long HEAD)"
-                  ENV_FQIN="${_REG}/${_IMG}:$ENV_TAG"
-                  ENV_IMG_FILENAME="${_IMG}-${ENV_TAG}.tar"
+                  ENV_TAG="${_TAG}"
+                  ENV_FQIN="${_REG}/${_IMG}:${_TAG}"
+                  ENV_IMG_FILENAME="$(basename ${_IMG})-${_TAG}.tar"
                   EOF
 
             - name: Build container image
@@ -43,7 +47,7 @@ jobs:
               run: |
                   source .env
                   mkdir -p artifacts
-                  docker save > "artifacts/${ENV_IMG_FILENAME}"
+                  docker save "${ENV_FQIN}" > "artifacts/${ENV_IMG_FILENAME}"
 
             - name: Upload artifacts
               uses: actions/upload-artifact@master
@@ -58,7 +62,7 @@ jobs:
               run: |
                   source .env
                   mkdir -p "$HOME/.docker"
-                  trap "rm -vf $HOME/.docker" EXIT
+                  trap "rm -vrf $HOME/.docker" EXIT
                   set +x
                   echo "$_BOT_CREDENTIALS" |& base64 --decode &> "$HOME/.docker/config.json"
                   docker push "${ENV_FQIN}"

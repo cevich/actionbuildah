@@ -1,7 +1,8 @@
-.env
 .dockerignore
+.env
 .git
 .github
 LICENSE
+Makefile
 README.md
 action.yml
