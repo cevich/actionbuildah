@@ -9,7 +9,7 @@ the latest Fedora container image with container-tools pre-installed:
 
 ## Inputs
 
-*see `artifacts.yml`*
+*see `action.yml`*
 
 ## Example usage
 

@@ -5,10 +5,7 @@
 name:  Build and push action container image to repository
 
 on:
-    schedule:
-        - cron: '01 10 */3 * *'
     push:
-        branches: [master]
         tags:
             - v[0-9]+.[0-9]+
 
@@ -28,8 +25,9 @@ jobs:
               env:
                   _REG: quay.io
               run: |
-                  # There may not be a tag in this tree for some reason
-                  _TAG="$(git describe --long HEAD || git rev-parse --short=8 HEAD)"
+                  _TAG="$(basename $GITHUB_REF)"
+                  # Assert always running against a tagged commit
+                  echo "$_TAG" | egrep -q '^v[0-9]+.[0-9]+'
                   # Evaluate values here so they're static upon load
                   cat << EOF > .env
                   set -eaxuo pipefail
