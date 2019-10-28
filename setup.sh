@@ -30,4 +30,8 @@ PACKAGES=("$(<$1)")
     dnf install -y ${PACKAGES[@]}
     dnf clean all
     rm -rf /var/cache/dnf
+
+    echo "Configuring container-in-container storage"
+    sed -i -r -e 's/^(driver = .+)/driver = "vfs"/' /etc/containers/storage.conf
+    sed -i -r -e 's/^(mountopt = .+)/mountopt = ""/' /etc/containers/storage.conf
 ) |& tee /root/$(basename "$0" | cut -d '.' -f 1).log
