@@ -1,6 +1,8 @@
 FROM registry.fedoraproject.org/fedora:latest
 MAINTAINER Chris Evich <cevich@redhat.com>
-ENV CONTAINER=true
+ENV CONTAINER=true \
+    _BUILDAH_STARTED_IN_USERNS="" \
+    BUILDAH_ISOLATION=chroot
 RUN dnf update -y && \
     dnf clean all && \
     rm -rf /var/cache/dnf && \
