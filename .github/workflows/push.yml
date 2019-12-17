@@ -31,6 +31,7 @@ jobs:
                   # Evaluate values here so they're static upon load
                   cat << EOF > .env
                   set -eaxuo pipefail
+                  ENV_IMG="${_IMG}"
                   ENV_TAG="${_TAG}"
                   ENV_FQIN="${_REG}/${_IMG}:${_TAG}"
                   ENV_IMG_FILENAME="$(basename ${_IMG})-${_TAG}.tar"
@@ -39,8 +40,12 @@ jobs:
             - name: Verify action YAML references matching image tag
               run: |
                   source .env
-                  cat action.yml
                   egrep -m 1 -q "^\s+image:\s+['\"]?docker://${ENV_FQIN}['\"]?$" action.yml
+
+            - name: Verify README.md example references action tag
+              run: |
+                  source .env
+                  egrep -m 1 -q "^uses:\s+['\"]?${ENV_IMG}@${ENV_TAG}['\"]?$" README.md
 
             - name: Build container image
               run: |

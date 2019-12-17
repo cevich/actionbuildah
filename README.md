@@ -14,7 +14,7 @@ the latest Fedora container image with container-tools pre-installed:
 ## Example usage
 
 ```yaml
-uses: cevich/makecontaineraction@v1.1
+uses: cevich/makecontaineraction@v1.4
 with:
     args: make_target
     artifacts_dirpath: ./path/to/stuff
