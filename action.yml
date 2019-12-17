@@ -12,4 +12,4 @@ runs:
     # env:
     using: 'docker'
     # N/B: This must be the last line in this file for CI purposes (here)
-    image: 'docker://quay.io/cevich/makecontaineraction:v1.3'
+    image: 'docker://quay.io/cevich/makecontaineraction:v1.4'
