@@ -11,4 +11,5 @@ runs:
     # environment variables are for communicating across runtime environments
     # env:
     using: 'docker'
-    image: 'docker://quay.io/cevich/makecontaineraction:v1.1'
+    # N/B: This must be the last line in this file for CI purposes (here)
+    image: 'docker://quay.io/cevich/makecontaineraction:v1.3'

@@ -36,6 +36,12 @@ jobs:
                   ENV_IMG_FILENAME="$(basename ${_IMG})-${_TAG}.tar"
                   EOF
 
+            - name: Verify action YAML references matching image tag
+              run: |
+                  source .env
+                  cat action.yml
+                  egrep -m 1 -q "^\s+image:\s+['\"]?docker://${ENV_FQIN}['\"]?$" action.yml
+
             - name: Build container image
               run: |
                   source .env
